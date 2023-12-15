@@ -8,6 +8,7 @@ use App\Models\Config;
 use App\Models\File;
 use App\Models\File_Group;
 use App\Models\Reservation;
+use Illuminate\Support\Facades\Cache;
 
 class FileRepository
 {
@@ -59,6 +60,10 @@ class FileRepository
 
         $this->file_group->where('file_id', $id)->delete();
 
+        if(Cache::has($id)){
+            Cache::forget($id);
+        }
+
         return $file;
     }
 
@@ -79,7 +84,7 @@ class FileRepository
     public function checkStateFiledelete($file_id,$user_id)
     {
         return $this->reservations->where('file_id',$file_id)
-            ->where('user_id','!=',$user_id)
+           // ->where('user_id','!=',$user_id)
             ->exists();
     }
 

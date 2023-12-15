@@ -11,7 +11,7 @@ use App\Http\Requests\saveFileRequest;
 use App\Http\Utiles\GETFile;
 use App\Http\Utiles\UploadFile;
 use App\Traits\GeneralTrait;
-
+use Illuminate\Support\Facades\Cache;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
 class FileOperationServices
@@ -52,9 +52,16 @@ class FileOperationServices
         if (!$this->repoF->checkStateFile($validated['file_id'],$user->id)->isEmpty()) {
             return $this->returnError(403, 'can not be read now');
         }
-
+ 
         $user = JWTAuth::parseToken()->authenticate();
+
+        if(Cache::has($validated['file_id'])){
+            $file = Cache::get($validated['file_id']);
+            $file =  asset('files'.'/' . $file);
+        }else{
         $file = GETFile::get($validated['file_id'], 'files');
+        Cache::put($validated['file_id'] , $this->repoF->getById($validated['file_id'])->path , now()->addDay());
+    }
         $this->history->addOperation($validated['file_id'], 'read', $user->id);
         return $this->returnData('Data', $file);
     }
@@ -71,7 +78,12 @@ class FileOperationServices
         $name = $request->file('path')->getClientOriginalName();
 
         UploadFile::delete($name, 'files');
-        UploadFile::upload($request->file('path'), 'files');
+        $newpath = UploadFile::upload($request->file('path'), 'files');
+
+        if(Cache::has($validated['file_id'])){
+            Cache::forget($validated['file_id']);
+            Cache::put($validated['file_id'] , $newpath , now()->addDay());
+        }
         $this->history->addOperation($validated['file_id'], 'save', $user->id);
         return $this->returnSuccessMessage('saved successfully');
     }

@@ -13,7 +13,7 @@ class AdminAuthController extends Controller
 {
     use GeneralTrait;
 
-    private $adminauthservice;
+    private $adminauthservice;  
 
     public function __construct(AdminAuthService $adminauthservice)
     {

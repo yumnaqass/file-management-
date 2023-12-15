@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('groups', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->unsignedBigInteger('owner_id');
+            $table->unsignedBigInteger('owner_id')->index();
 
             $table->foreign('owner_id')->references('id')->on('users')->onDelete('cascade');
             $table->timestamps();

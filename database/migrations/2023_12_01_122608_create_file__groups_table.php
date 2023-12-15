@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('file__groups', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('file_id');
-            $table->unsignedBigInteger('group_id');
+            $table->unsignedBigInteger('file_id')->index();
+            $table->unsignedBigInteger('group_id')->index();
 
             $table->foreign('file_id')->references('id')->on('files')->onDelete('cascade');
             $table->foreign('group_id')->references('id')->on('groups')->onDelete('cascade');
