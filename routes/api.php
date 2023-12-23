@@ -60,9 +60,10 @@ Route::post('check_in',[\App\Http\Controllers\FileOperationsController::class,'c
 Route::post('readFile',[\App\Http\Controllers\FileOperationsController::class,'readFile']);
 Route::post('saveFile',[\App\Http\Controllers\FileOperationsController::class,'saveFile']);
 Route::post('check_outFile',[\App\Http\Controllers\FileOperationsController::class,'check_outFile']);
+
 });
 
-
+Route::post('downloadfile',[\App\Http\Controllers\FileOperationsController::class,'DownloadFile'])->middleware('auth:api');
 ///////// Admin Routes /////////////////
 
 Route::group(['middleware'=>['App\Http\Middleware\AdminAuth:admin-api' , 'TransactionLogging']] , function(){

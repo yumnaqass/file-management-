@@ -55,4 +55,12 @@ class FileOperationsController extends Controller
             return $this->returnError(100, 'try again');
         }
     }
+
+    public function DownloadFile(deleteFileRequest $request){
+        try{
+            return $this->service->DownloadFile($request);
+        } catch (\Exception $exp) {
+            return $this->returnError(100 , 'try again');
+        }
+    }
 }

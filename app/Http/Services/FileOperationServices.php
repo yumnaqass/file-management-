@@ -101,4 +101,23 @@ class FileOperationServices
         $this->history->addOperation($validated['file_id'], 'check_out', $user->id);
         return $this->returnSuccessMessage('check_out successfully');
     }
-}
+
+    public function DownloadFile(deleteFileRequest $request){
+        $validated = $request->validated();
+        $user = JWTAuth::parseToken()->authenticate();
+
+        if ($this->repoF->checkStateFiledelete($validated['file_id'],$user->id)) {
+            return $this->returnError(403, "the file in check_in status");
+        }
+
+        if(Cache::has($validated['file_id'])){
+            $file = Cache::get($validated['file_id']);
+            return response()->download(public_path("files/".$this->repoF->getById($validated['file_id'])->path));
+        }
+        Cache::put($validated['file_id'] , $this->repoF->getById($validated['file_id'])->path , now()->addDay());
+        return response()->download(public_path("files/". $this->repoF->getById($validated['file_id'])->path));;
+    }
+
+
+        
+    }
